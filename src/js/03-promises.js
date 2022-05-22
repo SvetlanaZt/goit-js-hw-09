@@ -2,36 +2,46 @@ const form = document.querySelector('.form')
 // const amount = document.getElementsByTagName('.amount')
 
 form.addEventListener('submit', onPromise)
-
-let result = null;
-let i;
+let sum = null;
 
 function onPromise(evt) {
-  for (let i = 1; i <= evt.currentTarget.amount.value; i++) {
-    setTimeout(() => {
-          result = evt.currentTarget.delay.value + evt.currentTarget.step.value;
-      createPromise(i, result);
+  evt.preventDefault();
+  const amount = evt.target.amount.value;
+  let firstDelay = Number(evt.target.delay.value);
+  let step = Number(evt.target.step.value);    
+
+  for (let i = 1; i <= amount; i++) {
+    sum = firstDelay + step;
   
-    }, result)
+       setTimeout(() => {
+      createPromise(i, sum)
+        .then(({ position, delay }) => {
+    console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+  })
+  .catch(( { position, delay } ) => {
+    console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+  });
+             }, sum)
   }
 }  
 function createPromise(position, delay) {
-      return new Promise((resolve, reject) => {
-        const shouldResolve = Math.random() > 0.3;
-        delay = result;
-        position = i;
-        if (shouldResolve) {
-          resolve(i, result)
-        }
-        reject(i, result)
+  console.log(position)
+    console.log(delay)
+  return new Promise((resolve, reject) => {
+    const shouldResolve = Math.random() > 0.3;
+    if (shouldResolve) {
+      resolve({ position, delay })
+    }
+    reject({ position, delay })
       });
   }
-createPromise(2, 1500)
-  .then(( position, delay ) => {
-    console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-  })
-  .catch(( position, delay ) => {
-    console.log(`❌ Rejected promise ${position} in ${delay}ms`);
-  });
 
 
+
+  //     createPromise(2, 1500)
+  //       .then((position, delay) => {
+  //   console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+  // })
+  // .catch(( position, delay ) => {
+  //   console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+  // });
